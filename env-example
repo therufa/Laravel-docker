@@ -1,0 +1,37 @@
+# It's recommended to set a unique name for your containers 
+# if you have or plan to have multiple projects with laravel-docker
+COMPOSE_PROJECT_NAME=laravel-docker
+
+# Path to your application
+APP_PATH=../
+
+# Path on your host machine where you want to store your database data
+DATA_PATH_ON_HOST=~/.laravel-docker/dbdata/
+
+# Workspace container variables
+WS_INSTALL_NODEJS=true
+
+# PHP-FPM container variables
+PHP_CONTAINER_NAME=php-fpm
+PHP_CONTAINER_PORT=9000
+PHP_EXT_MYSQLI=true
+PHP_EXT_IMAP=true
+PHP_EXT_APCU=true
+PHP_EXT_BCMATH=true
+PHP_EXT_EXIF=true
+PHP_EXT_OPCACHE=true
+PHP_EXT_IMAGE_OPTIMIZERS=true
+PHP_EXT_IMAGEMAGICK=true
+PHP_EXT_INTL=true
+
+# Apache2 container variables
+APACHE_HTTP_PORT=8080
+APACHE_DOCUMENT_ROOT=/var/www/public
+
+# MariaDB container variables
+MARIADB_DATABASE=default
+MARIADB_USER=default
+MARIADB_PASSWORD=secret
+MARIADB_ROOT_PASSWORD=secret
+MARIADB_PORT=33066
+MARIADB_ENTRYPOINT_INITDB=./mariadb/docker-entrypoint-initdb.d

@@ -1,0 +1,77 @@
+version: "3.7"
+
+services:
+  workspace:
+    build: 
+      context: ./workspace
+      args:
+        - WS_INSTALL_NODEJS=${WS_INSTALL_NODEJS}
+    volumes:
+      - ${APP_PATH}:/var/www:z
+    networks:
+      - frontend
+      - backend
+
+  mariadb:
+    build: ./mariadb
+    volumes:
+      - ${DATA_PATH_ON_HOST}/mariadb:/var/lib/mysql:z
+      - ${MARIADB_ENTRYPOINT_INITDB}:/docker-entrypoint-initdb.d
+    ports:
+      - "${MARIADB_PORT}:3306"
+    environment:
+      - MYSQL_DATABASE=${MARIADB_DATABASE}
+      - MYSQL_USER=${MARIADB_USER}
+      - MYSQL_PASSWORD=${MARIADB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
+    networks:
+      - backend
+    depends_on:
+        - workspace
+
+  php-fpm:
+    build: 
+      context: ./php-fpm
+      args:
+        - PHP_EXT_MYSQLI=${PHP_EXT_MYSQLI}
+        - PHP_EXT_IMAP=${PHP_EXT_IMAP}
+        - PHP_EXT_APCU=${PHP_EXT_APCU}
+        - PHP_EXT_BCMATH=${PHP_EXT_BCMATH}
+        - PHP_EXT_EXIF=${PHP_EXT_EXIF}
+        - PHP_EXT_OPCACHE=${PHP_EXT_OPCACHE}
+        - PHP_EXT_IMAGE_OPTIMIZERS={$PHP_EXT_IMAGE_OPTIMIZERS}
+        - PHP_EXT_IMAGEMAGICK=${PHP_EXT_IMAGEMAGICK}
+        - PHP_EXT_INTL=${PHP_EXT_INTL}
+    volumes:
+      - ${APP_PATH}:/var/www:z
+    expose:
+      - "9000"
+    networks:
+      - backend
+    depends_on:
+      - workspace
+
+  apache2:
+    build: 
+      context: ./apache2
+      args:
+        - PHP_CONTAINER_NAME=${PHP_CONTAINER_NAME}
+        - PHP_CONTAINER_PORT=${PHP_CONTAINER_PORT}
+        - DOCUMENT_ROOT=${APACHE_DOCUMENT_ROOT}
+    volumes:
+      - ${APP_PATH}:/var/www:z
+    ports:
+      - "${APACHE_HTTP_PORT}:80"
+    depends_on:
+      - php-fpm
+    networks:
+      - frontend
+      - backend
+    depends_on:
+        - workspace
+
+networks:
+  backend:
+    driver: "bridge"
+  frontend:
+    driver: "bridge"

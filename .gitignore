@@ -1,0 +1,3 @@
+/.env
+/mariadb/docker-entrypoint-initdb.d/**
+!.gitkeep
