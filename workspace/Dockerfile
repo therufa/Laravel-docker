@@ -18,11 +18,12 @@ RUN apt-get install -y software-properties-common && \
 
 # Run apt-get update and clean up at end, create user and group
 RUN set -xe; \
-    apt-get update -yqq && apt-get upgrade -yqq && \
+    apt-get update -yqq && apt-get upgrade -yqq --option=Dpkg::Options::=--force-confdef && \
     groupadd -g ${PGID} wsuser && \
     useradd -u ${PUID} -g wsuser -m wsuser -G docker_env && \
-    usermod -p "*" wsuser -s /bin/bash && \
-	apt-get install -yqq --allow-downgrades --allow-remove-essential \
+    usermod -p "*" wsuser -s /bin/bash
+
+RUN apt-get install -yqq --allow-downgrades --allow-remove-essential \
         --allow-change-held-packages \
         apt-utils \
         curl \
@@ -57,8 +58,9 @@ RUN set -xe; \
         unzip \
         vim \
         xz-utils \
-        zip && \
-	apt-get clean
+        zip
+
+RUN apt-get clean
 
 # Python
 RUN apt-get install -yqq python python-pip python-dev build-essential  \
