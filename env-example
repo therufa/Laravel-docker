@@ -35,3 +35,5 @@ MARIADB_PASSWORD=secret
 MARIADB_ROOT_PASSWORD=secret
 MARIADB_PORT=33066
 MARIADB_ENTRYPOINT_INITDB=./mariadb/docker-entrypoint-initdb.d
+
+MASTER_PLAN=DominateTheWorld
